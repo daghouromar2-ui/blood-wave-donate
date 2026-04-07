@@ -61,6 +61,7 @@ const DonationForm = () => {
       wilaya: "",
       municipality: "",
       bloodType: "",
+      lastDonation: undefined,
     });
     
     setIsSubmitting(false);
