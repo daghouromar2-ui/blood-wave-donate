@@ -57,7 +57,7 @@ const DonationForm = () => {
   };
 
   const inputClassName = 
-    "w-full px-5 py-3 pr-12 rounded-full bg-white/20 border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm text-white";
+    "w-full px-5 py-3 pr-12 rounded-full border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm text-white bg-primary-foreground";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
@@ -66,10 +66,10 @@ const DonationForm = () => {
         <User className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600" />
         <input
           type="text"
-          placeholder="الاسم الكامل *"
+          placeholder="الإسم الكامل *"
           value={formData.fullName}
           onChange={(e) => handleChange("fullName", e.target.value)}
-          className={inputClassName}
+          className={inputClassName.replace("bg-primary-foreground", "bg-secondary-foreground")}
         />
       </div>
 
@@ -81,7 +81,7 @@ const DonationForm = () => {
           placeholder="رقم الهاتف1 (واتساب) *"
           value={formData.phone1}
           onChange={(e) => handleChange("phone1", e.target.value)}
-          className={inputClassName}
+          className={inputClassName.replace("bg-primary-foreground", "bg-destructive-foreground")}
         />
       </div>
 
