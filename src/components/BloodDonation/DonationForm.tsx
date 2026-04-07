@@ -1,7 +1,15 @@
 import { useState } from "react";
-import { User, Phone, MapPin } from "lucide-react";
+import { User, Phone, MapPin, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { ar } from "date-fns/locale";
 import { toast } from "sonner";
 import BloodTypeSelector from "./BloodTypeSelector";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface FormData {
   fullName: string;
@@ -10,6 +18,7 @@ interface FormData {
   wilaya: string;
   municipality: string;
   bloodType: string;
+  lastDonation: Date | undefined;
 }
 
 const DonationForm = () => {
@@ -20,6 +29,7 @@ const DonationForm = () => {
     wilaya: "",
     municipality: "",
     bloodType: "",
+    lastDonation: undefined,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -51,6 +61,7 @@ const DonationForm = () => {
       wilaya: "",
       municipality: "",
       bloodType: "",
+      lastDonation: undefined,
     });
     
     setIsSubmitting(false);
@@ -126,6 +137,36 @@ const DonationForm = () => {
         value={formData.bloodType}
         onChange={(value) => handleChange("bloodType", value)}
       />
+
+      {/* Last Donation Date */}
+      <div className="space-y-2" dir="rtl">
+        <label className="text-sm font-medium text-primary-foreground">متى آخر مرة قمت بالتبرع؟</label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className={`${inputClassName} flex items-center justify-between cursor-pointer`}
+            >
+              <span className={formData.lastDonation ? "text-white" : "text-white/50"}>
+                {formData.lastDonation
+                  ? format(formData.lastDonation, "dd/MM/yyyy", { locale: ar })
+                  : "اختر التاريخ"}
+              </span>
+              <CalendarIcon className="w-5 h-5 text-red-600" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0 bg-background border-red-300/50" align="start">
+            <Calendar
+              mode="single"
+              selected={formData.lastDonation}
+              onSelect={(date) => setFormData((prev) => ({ ...prev, lastDonation: date }))}
+              disabled={(date) => date > new Date()}
+              initialFocus
+              className="p-3 pointer-events-auto"
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
 
       {/* Submit Button */}
       <button
