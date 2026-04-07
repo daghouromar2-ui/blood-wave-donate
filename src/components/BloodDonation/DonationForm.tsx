@@ -57,7 +57,7 @@ const DonationForm = () => {
   };
 
   const inputClassName = 
-    "w-full px-5 py-3 pr-12 rounded-full bg-white/20 border border-red-300/50 text-red-900 placeholder:text-red-400/70 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm";
+    "w-full px-5 py-3 pr-12 rounded-full bg-white/20 border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm text-white";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
@@ -78,7 +78,7 @@ const DonationForm = () => {
         <Phone className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600" />
         <input
           type="tel"
-          placeholder="رقم الهاتف 1 *"
+          placeholder="رقم الهاتف1 (واتساب) *"
           value={formData.phone1}
           onChange={(e) => handleChange("phone1", e.target.value)}
           className={inputClassName}
