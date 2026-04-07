@@ -29,6 +29,7 @@ const DonationForm = () => {
     wilaya: "",
     municipality: "",
     bloodType: "",
+    lastDonation: undefined,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
