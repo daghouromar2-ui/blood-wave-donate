@@ -15,7 +15,7 @@ const Index = () => {
           <h1 className="text-2xl font-bold text-white drop-shadow-lg mb-1">
             التبرع بالدم
           </h1>
-          <p className="text-red-100/80 text-sm">الغرارة</p>
+          <p className="text-red-100/80 text-sm">القرارة</p>
         </div>
 
         <GlassCard>
