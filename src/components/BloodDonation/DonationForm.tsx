@@ -1,7 +1,15 @@
 import { useState } from "react";
-import { User, Phone, MapPin } from "lucide-react";
+import { User, Phone, MapPin, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { ar } from "date-fns/locale";
 import { toast } from "sonner";
 import BloodTypeSelector from "./BloodTypeSelector";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface FormData {
   fullName: string;
@@ -10,6 +18,7 @@ interface FormData {
   wilaya: string;
   municipality: string;
   bloodType: string;
+  lastDonation: Date | undefined;
 }
 
 const DonationForm = () => {
