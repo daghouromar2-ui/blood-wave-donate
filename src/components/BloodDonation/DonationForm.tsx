@@ -138,6 +138,36 @@ const DonationForm = () => {
         onChange={(value) => handleChange("bloodType", value)}
       />
 
+      {/* Last Donation Date */}
+      <div className="space-y-2" dir="rtl">
+        <label className="text-sm font-medium text-primary-foreground">متى آخر مرة قمت بالتبرع؟</label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className={`${inputClassName} flex items-center justify-between cursor-pointer`}
+            >
+              <span className={formData.lastDonation ? "text-white" : "text-white/50"}>
+                {formData.lastDonation
+                  ? format(formData.lastDonation, "dd/MM/yyyy", { locale: ar })
+                  : "اختر التاريخ"}
+              </span>
+              <CalendarIcon className="w-5 h-5 text-red-600" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0 bg-background border-red-300/50" align="start">
+            <Calendar
+              mode="single"
+              selected={formData.lastDonation}
+              onSelect={(date) => setFormData((prev) => ({ ...prev, lastDonation: date }))}
+              disabled={(date) => date > new Date()}
+              initialFocus
+              className="p-3 pointer-events-auto"
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+
       {/* Submit Button */}
       <button
         type="submit"
