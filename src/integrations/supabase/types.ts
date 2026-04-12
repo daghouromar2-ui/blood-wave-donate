@@ -14,7 +14,130 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contact_logs: {
+        Row: {
+          contact_date: string
+          contact_method: string
+          contacted_by: string | null
+          created_at: string
+          donor_id: string
+          id: string
+          response_status: string | null
+        }
+        Insert: {
+          contact_date?: string
+          contact_method?: string
+          contacted_by?: string | null
+          created_at?: string
+          donor_id: string
+          id?: string
+          response_status?: string | null
+        }
+        Update: {
+          contact_date?: string
+          contact_method?: string
+          contacted_by?: string | null
+          created_at?: string
+          donor_id?: string
+          id?: string
+          response_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_logs_donor_id_fkey"
+            columns: ["donor_id"]
+            isOneToOne: false
+            referencedRelation: "donors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      donation_history: {
+        Row: {
+          created_at: string
+          donation_date: string
+          donor_id: string
+          id: string
+          location: string | null
+          notes: string | null
+        }
+        Insert: {
+          created_at?: string
+          donation_date?: string
+          donor_id: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+        }
+        Update: {
+          created_at?: string
+          donation_date?: string
+          donor_id?: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donation_history_donor_id_fkey"
+            columns: ["donor_id"]
+            isOneToOne: false
+            referencedRelation: "donors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      donors: {
+        Row: {
+          blood_type: string
+          created_at: string
+          date_of_birth: string | null
+          full_name: string
+          gender: string | null
+          id: string
+          is_active: boolean
+          last_donation_date: string | null
+          municipality: string | null
+          phone_secondary: string | null
+          phone_whatsapp: string
+          total_donations: number
+          updated_at: string
+          wilaya: string | null
+        }
+        Insert: {
+          blood_type: string
+          created_at?: string
+          date_of_birth?: string | null
+          full_name: string
+          gender?: string | null
+          id?: string
+          is_active?: boolean
+          last_donation_date?: string | null
+          municipality?: string | null
+          phone_secondary?: string | null
+          phone_whatsapp: string
+          total_donations?: number
+          updated_at?: string
+          wilaya?: string | null
+        }
+        Update: {
+          blood_type?: string
+          created_at?: string
+          date_of_birth?: string | null
+          full_name?: string
+          gender?: string | null
+          id?: string
+          is_active?: boolean
+          last_donation_date?: string | null
+          municipality?: string | null
+          phone_secondary?: string | null
+          phone_whatsapp?: string
+          total_donations?: number
+          updated_at?: string
+          wilaya?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
