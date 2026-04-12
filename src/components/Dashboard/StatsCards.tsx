@@ -1,0 +1,60 @@
+import { Users, UserCheck, CalendarHeart, Droplets } from "lucide-react";
+import type { Donor } from "@/lib/constants";
+import { ELIGIBILITY_DAYS } from "@/lib/constants";
+import { differenceInDays, startOfMonth, isAfter } from "date-fns";
+
+interface StatsCardsProps {
+  donors: Donor[];
+}
+
+const StatsCards = ({ donors }: StatsCardsProps) => {
+  const today = new Date();
+  const monthStart = startOfMonth(today);
+
+  const totalDonors = donors.length;
+
+  const eligibleDonors = donors.filter((d) => {
+    if (!d.is_active) return false;
+    if (!d.last_donation_date) return true;
+    return differenceInDays(today, new Date(d.last_donation_date)) >= ELIGIBILITY_DAYS;
+  }).length;
+
+  const donationsThisMonth = donors.filter(
+    (d) => d.last_donation_date && isAfter(new Date(d.last_donation_date), monthStart)
+  ).length;
+
+  const bloodTypeCounts: Record<string, number> = {};
+  donors.forEach((d) => {
+    bloodTypeCounts[d.blood_type] = (bloodTypeCounts[d.blood_type] || 0) + 1;
+  });
+  const mostCommon = Object.entries(bloodTypeCounts).sort((a, b) => b[1] - a[1])[0];
+
+  const stats = [
+    { label: "إجمالي المتبرعين", value: totalDonors, icon: Users, color: "from-blue-500 to-blue-600" },
+    { label: "مؤهلون حالياً", value: eligibleDonors, icon: UserCheck, color: "from-emerald-500 to-emerald-600" },
+    { label: "تبرعات هذا الشهر", value: donationsThisMonth, icon: CalendarHeart, color: "from-amber-500 to-amber-600" },
+    { label: "أكثر فصيلة شيوعاً", value: mostCommon?.[0] || "-", icon: Droplets, color: "from-purple-500 to-purple-600" },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {stats.map((stat) => (
+        <div
+          key={stat.label}
+          className="rounded-2xl border border-white/10 p-5 backdrop-blur-xl"
+          style={{ background: "rgba(255,255,255,0.05)" }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm text-white/60">{stat.label}</span>
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+              <stat.icon className="w-5 h-5 text-white" />
+            </div>
+          </div>
+          <p className="text-3xl font-bold text-white">{stat.value}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default StatsCards;
