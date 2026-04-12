@@ -3,6 +3,7 @@ import { User, Phone, MapPin, CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import BloodTypeSelector from "./BloodTypeSelector";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -47,22 +48,34 @@ const DonationForm = () => {
 
     setIsSubmitting(true);
     
-    // Simulate submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    toast.success("تم التسجيل بنجاح! جزاك الله خيراً", {
-      description: "سيتم التواصل معك عند الحاجة",
+    const { error } = await supabase.from("donors").insert({
+      full_name: formData.fullName,
+      phone_whatsapp: formData.phone1,
+      phone_secondary: formData.phone2 || null,
+      wilaya: formData.wilaya || null,
+      municipality: formData.municipality || null,
+      blood_type: formData.bloodType,
+      last_donation_date: formData.lastDonation ? format(formData.lastDonation, "yyyy-MM-dd") : null,
     });
-    
-    setFormData({
-      fullName: "",
-      phone1: "",
-      phone2: "",
-      wilaya: "",
-      municipality: "",
-      bloodType: "",
-      lastDonation: undefined,
-    });
+
+    if (error) {
+      toast.error("حدث خطأ أثناء التسجيل. الرجاء المحاولة مرة أخرى");
+      console.error(error);
+    } else {
+      toast.success("تم التسجيل بنجاح! جزاك الله خيراً", {
+        description: "سيتم التواصل معك عند الحاجة",
+      });
+      
+      setFormData({
+        fullName: "",
+        phone1: "",
+        phone2: "",
+        wilaya: "",
+        municipality: "",
+        bloodType: "",
+        lastDonation: undefined,
+      });
+    }
     
     setIsSubmitting(false);
   };
