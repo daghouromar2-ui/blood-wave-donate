@@ -28,10 +28,17 @@ const EmergencyModal = ({ donors }: EmergencyModalProps) => {
     return encodeURIComponent(msg);
   };
 
+  const formatPhone = (phone: string) => {
+    let p = phone.replace(/[^0-9]/g, "");
+    if (p.startsWith("0")) p = "213" + p.slice(1);
+    else if (!p.startsWith("213")) p = "213" + p;
+    return p;
+  };
+
   const sendToAll = () => {
     eligibleDonors.forEach((donor) => {
-      const phone = donor.phone_whatsapp.replace(/[^0-9]/g, "");
-      window.open(`https://wa.me/${phone}?text=${getMessage(donor)}`, "_blank");
+      const phone = formatPhone(donor.phone_whatsapp);
+      window.open(`https://wa.me/${phone}?text=${getMessage(donor)}`, "_blank", "noopener,noreferrer");
     });
   };
 
@@ -107,14 +114,19 @@ const EmergencyModal = ({ donors }: EmergencyModalProps) => {
                     <p className="text-xs text-white/50">{donor.blood_type} — {donor.wilaya}</p>
                   </div>
                   <div className="flex gap-2">
-                    <a href={`tel:${donor.phone_whatsapp}`} className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center hover:bg-blue-500/40">
+                    <button
+                      onClick={() => window.open(`tel:${donor.phone_whatsapp}`, "_self")}
+                      className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center hover:bg-blue-500/40"
+                      title="اتصال"
+                    >
                       <Phone className="w-4 h-4 text-blue-400" />
-                    </a>
+                    </button>
                     <a
-                      href={`https://wa.me/${donor.phone_whatsapp.replace(/[^0-9]/g, "")}?text=${getMessage(donor)}`}
+                      href={`https://wa.me/${formatPhone(donor.phone_whatsapp)}?text=${getMessage(donor)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center hover:bg-emerald-500/40"
+                      title="واتساب"
                     >
                       <MessageCircle className="w-4 h-4 text-emerald-400" />
                     </a>
