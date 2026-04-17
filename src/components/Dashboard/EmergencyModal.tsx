@@ -1,10 +1,17 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { AlertTriangle, MessageCircle, Phone } from "lucide-react";
 import { BLOOD_TYPES, ELIGIBILITY_DAYS } from "@/lib/constants";
 import type { Donor } from "@/lib/constants";
 import { BLOOD_TYPE_COLORS } from "@/lib/constants";
 import { differenceInDays } from "date-fns";
+import { toast } from "@/components/ui/sonner";
 
 interface EmergencyModalProps {
   donors: Donor[];
@@ -20,7 +27,10 @@ const EmergencyModal = ({ donors }: EmergencyModalProps) => {
     if (!d.is_active) return false;
     if (selectedType && d.blood_type !== selectedType) return false;
     if (!d.last_donation_date) return true;
-    return differenceInDays(today, new Date(d.last_donation_date)) >= ELIGIBILITY_DAYS;
+    return (
+      differenceInDays(today, new Date(d.last_donation_date)) >=
+      ELIGIBILITY_DAYS
+    );
   });
 
   const getMessage = (donor: Donor) => {
@@ -36,10 +46,21 @@ const EmergencyModal = ({ donors }: EmergencyModalProps) => {
   };
 
   const sendToAll = () => {
-    eligibleDonors.forEach((donor) => {
-      const phone = formatPhone(donor.phone_whatsapp);
-      window.open(`https://wa.me/${phone}?text=${getMessage(donor)}`, "_blank", "noopener,noreferrer");
+    if (eligibleDonors.length === 0) return;
+
+    eligibleDonors.forEach((donor, index) => {
+      setTimeout(() => {
+        const phone = formatPhone(donor.phone_whatsapp);
+        const msg = getMessage(donor);
+        window.open(
+          `https://wa.me/${phone}?text=${msg}`,
+          "_blank",
+          "noopener,noreferrer",
+        );
+      }, index * 1500); // 1.5 second delay between each
     });
+
+    toast.success(`جاري فتح ${eligibleDonors.length} محادثة واتساب...`);
   };
 
   return (
@@ -56,7 +77,10 @@ const EmergencyModal = ({ donors }: EmergencyModalProps) => {
           طلب دم عاجل
         </button>
       </DialogTrigger>
-      <DialogContent className="bg-gray-900/95 border-red-500/30 text-white max-w-lg backdrop-blur-xl" dir="rtl">
+      <DialogContent
+        className="bg-gray-900/95 border-red-500/30 text-white max-w-lg backdrop-blur-xl"
+        dir="rtl"
+      >
         <DialogHeader>
           <DialogTitle className="text-xl text-red-400 flex items-center gap-2">
             <AlertTriangle className="w-6 h-6" />
@@ -67,7 +91,9 @@ const EmergencyModal = ({ donors }: EmergencyModalProps) => {
         <div className="space-y-4">
           {/* Blood type selector */}
           <div>
-            <label className="text-sm text-white/70 mb-2 block">فصيلة الدم المطلوبة</label>
+            <label className="text-sm text-white/70 mb-2 block">
+              فصيلة الدم المطلوبة
+            </label>
             <div className="flex flex-wrap gap-2">
               {BLOOD_TYPES.map((type) => {
                 const colors = BLOOD_TYPE_COLORS[type];
@@ -103,33 +129,50 @@ const EmergencyModal = ({ donors }: EmergencyModalProps) => {
           {/* Results */}
           <div className="border-t border-white/10 pt-4">
             <p className="text-sm text-white/70 mb-3">
-              عدد المتبرعين المؤهلين: <span className="text-emerald-400 font-bold">{eligibleDonors.length}</span>
+              عدد المتبرعين المؤهلين:{" "}
+              <span className="text-emerald-400 font-bold">
+                {eligibleDonors.length}
+              </span>
             </p>
 
             <div className="max-h-48 overflow-y-auto space-y-2">
               {eligibleDonors.slice(0, 20).map((donor) => (
-                <div key={donor.id} className="flex items-center justify-between bg-white/5 rounded-xl px-3 py-2">
+                <div
+                  key={donor.id}
+                  className="flex items-center justify-between bg-white/5 rounded-xl px-3 py-2"
+                >
                   <div>
                     <p className="text-sm font-medium">{donor.full_name}</p>
-                    <p className="text-xs text-white/50">{donor.blood_type} — {donor.wilaya}</p>
+                    <p className="text-xs text-white/50">
+                      {donor.blood_type} — {donor.wilaya}
+                    </p>
                   </div>
                   <div className="flex gap-2">
+                    {/* Phone Button - FIXED */}
                     <button
-                      onClick={() => window.open(`tel:${donor.phone_whatsapp}`, "_self")}
+                      onClick={() =>
+                        (window.location.href = `tel:+${formatPhone(donor.phone_whatsapp)}`)
+                      }
                       className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center hover:bg-blue-500/40"
                       title="اتصال"
                     >
                       <Phone className="w-4 h-4 text-blue-400" />
                     </button>
-                    <a
-                      href={`https://wa.me/${formatPhone(donor.phone_whatsapp)}?text=${getMessage(donor)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+
+                    {/* WhatsApp Button - FIXED */}
+                    <button
+                      onClick={() =>
+                        window.open(
+                          `https://wa.me/${formatPhone(donor.phone_whatsapp)}?text=${getMessage(donor)}`,
+                          "_blank",
+                          "noopener,noreferrer",
+                        )
+                      }
                       className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center hover:bg-emerald-500/40"
                       title="واتساب"
                     >
                       <MessageCircle className="w-4 h-4 text-emerald-400" />
-                    </a>
+                    </button>
                   </div>
                 </div>
               ))}
