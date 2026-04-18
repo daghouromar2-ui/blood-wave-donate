@@ -30,10 +30,10 @@ const StatsCards = ({ donors }: StatsCardsProps) => {
   const mostCommon = Object.entries(bloodTypeCounts).sort((a, b) => b[1] - a[1])[0];
 
   const stats = [
-    { label: "إجمالي المتبرعين", value: totalDonors, icon: Users, color: "from-blue-500 to-blue-600" },
-    { label: "مؤهلون حالياً", value: eligibleDonors, icon: UserCheck, color: "from-emerald-500 to-emerald-600" },
-    { label: "تبرعات هذا الشهر", value: donationsThisMonth, icon: CalendarHeart, color: "from-amber-500 to-amber-600" },
-    { label: "أكثر فصيلة شيوعاً", value: mostCommon?.[0] || "-", icon: Droplets, color: "from-purple-500 to-purple-600" },
+    { label: "إجمالي المتبرعين", value: totalDonors, icon: Users, color: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" },
+    { label: "مؤهلون حالياً", value: eligibleDonors, icon: UserCheck, color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400" },
+    { label: "تبرعات هذا الشهر", value: donationsThisMonth, icon: CalendarHeart, color: "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400" },
+    { label: "أكثر فصيلة شيوعاً", value: mostCommon?.[0] || "-", icon: Droplets, color: "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400" },
   ];
 
   return (
@@ -41,16 +41,15 @@ const StatsCards = ({ donors }: StatsCardsProps) => {
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="rounded-2xl border border-white/10 p-5 backdrop-blur-xl"
-          style={{ background: "rgba(255,255,255,0.05)" }}
+          className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-white/60">{stat.label}</span>
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-              <stat.icon className="w-5 h-5 text-white" />
+            <span className="text-sm text-slate-500 dark:text-slate-400">{stat.label}</span>
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${stat.color}`}>
+              <stat.icon className="w-5 h-5" />
             </div>
           </div>
-          <p className="text-3xl font-bold text-white">{stat.value}</p>
+          <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{stat.value}</p>
         </div>
       ))}
     </div>

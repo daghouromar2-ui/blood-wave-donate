@@ -38,9 +38,10 @@ import { toast } from "../ui/sonner";
 
 interface DonorsTableProps {
   donors: Donor[];
+  allDonors?: Donor[];
 }
 
-const DonorsTable = ({ donors }: DonorsTableProps) => {
+const DonorsTable = ({ donors, allDonors }: DonorsTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedDonor, setSelectedDonor] = useState<Donor | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -73,7 +74,7 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
             type="checkbox"
             checked={table.getIsAllRowsSelected()}
             onChange={table.getToggleAllRowsSelectedHandler()}
-            className="accent-red-500"
+            className="accent-blue-600"
           />
         ),
         cell: ({ row }) => (
@@ -81,7 +82,7 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
             type="checkbox"
             checked={row.getIsSelected()}
             onChange={row.getToggleSelectedHandler()}
-            className="accent-red-500"
+            className="accent-blue-600"
           />
         ),
         size: 40,
@@ -90,7 +91,7 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
         accessorKey: "full_name",
         header: "الاسم",
         cell: ({ getValue }) => (
-          <span className="font-medium">{getValue<string>()}</span>
+          <span className="font-medium text-slate-900 dark:text-slate-100">{getValue<string>()}</span>
         ),
       },
       {
@@ -116,7 +117,7 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
         accessorKey: "phone_whatsapp",
         header: "الهاتف",
         cell: ({ getValue }) => (
-          <span className="text-white/70 text-sm">{getValue<string>()}</span>
+          <span className="text-slate-600 dark:text-slate-300 text-sm">{getValue<string>()}</span>
         ),
       },
       {
@@ -125,7 +126,7 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
         accessorFn: (row) =>
           [row.municipality, row.wilaya].filter(Boolean).join("، "),
         cell: ({ getValue }) => (
-          <span className="text-white/60 text-sm">
+          <span className="text-slate-500 dark:text-slate-400 text-sm">
             {getValue<string>() || "—"}
           </span>
         ),
@@ -136,7 +137,7 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
         cell: ({ getValue }) => {
           const val = getValue<string | null>();
           return (
-            <span className="text-white/60 text-sm">
+            <span className="text-slate-500 dark:text-slate-400 text-sm">
               {val ? format(new Date(val), "dd/MM/yyyy", { locale: ar }) : "—"}
             </span>
           );
@@ -150,7 +151,7 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
           const e = getEligibility(row.original);
           return (
             <span
-              className={`px-2 py-1 rounded-full text-xs font-semibold ${e.eligible ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}
+              className={`px-2 py-1 rounded-full text-xs font-semibold ${e.eligible ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}
             >
               {e.label}
             </span>
@@ -162,59 +163,45 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
         header: "",
         cell: ({ row }) => {
           const d = row.original;
-
-          // Format phone number properly
           const formatPhone = (phone: string) => {
             let p = phone.replace(/[^0-9]/g, "");
             if (p.startsWith("0")) p = "213" + p.slice(1);
             else if (!p.startsWith("213")) p = "213" + p;
             return p;
           };
-
           const formattedPhone = formatPhone(d.phone_whatsapp);
 
           return (
             <div className="flex items-center gap-1">
-              {/* Phone Call Button - FIXED */}
               <button
-                onClick={() =>
-                  (window.location.href = `tel:+${formattedPhone}`)
-                }
-                className="p-1.5 rounded-lg hover:bg-blue-500/20 text-blue-400"
+                onClick={() => (window.location.href = `tel:+${formattedPhone}`)}
+                className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                 title="اتصال"
               >
                 <Phone className="w-4 h-4" />
               </button>
-
-              {/* WhatsApp Button - FIXED */}
               <button
                 onClick={() =>
-                  window.open(
-                    `https://wa.me/${formattedPhone}`,
-                    "_blank",
-                    "noopener,noreferrer",
-                  )
+                  window.open(`https://wa.me/${formattedPhone}`, "_blank", "noopener,noreferrer")
                 }
-                className="p-1.5 rounded-lg hover:bg-emerald-500/20 text-emerald-400"
+                className="p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
                 title="واتساب"
               >
                 <MessageCircle className="w-4 h-4" />
               </button>
-
               <button
                 onClick={() => {
                   setSelectedDonor(d);
                   setDetailsOpen(true);
                 }}
-                className="p-1.5 rounded-lg hover:bg-white/10 text-white/60"
+                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400"
                 title="عرض"
               >
                 <Eye className="w-4 h-4" />
               </button>
-
               <button
                 onClick={() => setDeleteTarget(d)}
-                className="p-1.5 rounded-lg hover:bg-red-500/20 text-red-400"
+                className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400"
                 title="حذف"
               >
                 <Trash2 className="w-4 h-4" />
@@ -251,21 +238,10 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
     setDeleteTarget(null);
   };
 
-  const exportCSV = () => {
-    const selectedRows = table.getSelectedRowModel().rows;
-    const dataToExport =
-      selectedRows.length > 0 ? selectedRows.map((r) => r.original) : donors;
+  const buildAndDownloadCSV = (rows: Donor[], suffix = "") => {
     const BOM = "\uFEFF";
-    const headers = [
-      "الاسم",
-      "الفصيلة",
-      "الهاتف",
-      "الولاية",
-      "البلدية",
-      "آخر تبرع",
-      "الحالة",
-    ];
-    const rows = dataToExport.map((d) => [
+    const headers = ["الاسم", "الفصيلة", "الهاتف", "الولاية", "البلدية", "آخر تبرع", "الحالة"];
+    const dataRows = rows.map((d) => [
       d.full_name,
       d.blood_type,
       d.phone_whatsapp,
@@ -274,65 +250,68 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
       d.last_donation_date || "",
       getEligibility(d).label,
     ]);
-    const csv = BOM + [headers, ...rows].map((r) => r.join(",")).join("\n");
+    const csv = BOM + [headers, ...dataRows]
+      .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `donors_${format(today, "yyyy-MM-dd")}.csv`;
+    a.download = `donors${suffix}_${format(today, "yyyy-MM-dd")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("تم تصدير الملف بنجاح");
+  };
+
+  const exportSelectedOrFiltered = () => {
+    const selectedRows = table.getSelectedRowModel().rows;
+    if (selectedRows.length > 0) {
+      buildAndDownloadCSV(selectedRows.map((r) => r.original), "_selected");
+      toast.success(`تم تصدير ${selectedRows.length} متبرع`);
+    } else {
+      buildAndDownloadCSV(donors, "_filtered");
+      toast.success(`تم تصدير ${donors.length} متبرع`);
+    }
+  };
+
+  const exportAll = () => {
+    const all = allDonors ?? donors;
+    buildAndDownloadCSV(all, "_all");
+    toast.success(`تم تصدير جميع المتبرعين (${all.length})`);
   };
 
   const selectedCount = Object.keys(rowSelection).length;
 
   return (
-    <div
-      className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden"
-      style={{ background: "rgba(255,255,255,0.05)" }}
-    >
-      {/* Bulk actions bar */}
+    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
       {selectedCount > 0 && (
-        <div className="flex items-center justify-between px-4 py-2 bg-red-500/10 border-b border-white/10">
-          <span className="text-sm text-white/70">{selectedCount} محدد</span>
+        <div className="flex items-center justify-between px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border-b border-slate-200 dark:border-slate-800">
+          <span className="text-sm text-slate-700 dark:text-slate-300">{selectedCount} محدد</span>
           <button
-            onClick={exportCSV}
-            className="text-sm text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+            onClick={exportSelectedOrFiltered}
+            className="text-sm text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
           >
-            <Download className="w-4 h-4" /> تصدير CSV
+            <Download className="w-4 h-4" /> تصدير المحدد
           </button>
         </div>
       )}
 
       <div className="overflow-x-auto">
         <table className="w-full text-right" dir="rtl">
-          <thead>
+          <thead className="bg-slate-50 dark:bg-slate-800/50">
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b border-white/10">
+              <tr key={headerGroup.id} className="border-b border-slate-200 dark:border-slate-800">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    onClick={
-                      header.column.getCanSort()
-                        ? header.column.getToggleSortingHandler()
-                        : undefined
-                    }
-                    className="px-4 py-3 text-xs font-medium text-white/50 uppercase tracking-wider cursor-pointer select-none hover:text-white/80"
+                    onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
+                    className="px-4 py-3 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer select-none hover:text-slate-900 dark:hover:text-slate-100"
                   >
                     <div className="flex items-center gap-1">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                      {header.column.getIsSorted() === "asc" && (
-                        <ChevronUp className="w-3 h-3" />
-                      )}
-                      {header.column.getIsSorted() === "desc" && (
-                        <ChevronDown className="w-3 h-3" />
-                      )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.column.getIsSorted() === "asc" && <ChevronUp className="w-3 h-3" />}
+                      {header.column.getIsSorted() === "desc" && <ChevronDown className="w-3 h-3" />}
                     </div>
                   </th>
                 ))}
@@ -343,7 +322,7 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-3">
@@ -356,62 +335,56 @@ const DonorsTable = ({ donors }: DonorsTableProps) => {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between px-4 py-3 border-t border-white/10">
-        <div className="flex items-center gap-1 text-sm text-white/50">
-          <span>إجمالي: {donors.length}</span>
+      <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex-wrap gap-2">
+        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+          <span>المعروض: {donors.length}</span>
+          {allDonors && allDonors.length !== donors.length && (
+            <span className="text-slate-400">/ الإجمالي: {allDonors.length}</span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="px-3 py-1 rounded-lg bg-white/10 text-white/70 text-sm disabled:opacity-30 hover:bg-white/20"
+            className="px-3 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             السابق
           </button>
-          <span className="text-sm text-white/50">
-            {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+          <span className="text-sm text-slate-500">
+            {table.getState().pagination.pageIndex + 1} / {Math.max(table.getPageCount(), 1)}
           </span>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="px-3 py-1 rounded-lg bg-white/10 text-white/70 text-sm disabled:opacity-30 hover:bg-white/20"
+            className="px-3 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             التالي
           </button>
         </div>
         <button
-          onClick={exportCSV}
-          className="flex items-center gap-1 text-sm text-white/50 hover:text-white/80"
+          onClick={exportAll}
+          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium"
         >
-          <Download className="w-4 h-4" /> تصدير
+          <Download className="w-4 h-4" /> تصدير الكل ({(allDonors ?? donors).length})
         </button>
       </div>
 
-      {/* Modals */}
       <DonorDetailsModal
         donor={selectedDonor}
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
       />
 
-      <AlertDialog
-        open={!!deleteTarget}
-        onOpenChange={() => setDeleteTarget(null)}
-      >
-        <AlertDialogContent
-          className="bg-gray-900 border-white/10 text-white"
-          dir="rtl"
-        >
+      <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
+        <AlertDialogContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100" dir="rtl">
           <AlertDialogHeader>
             <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
-            <AlertDialogDescription className="text-white/60">
-              هل أنت متأكد من حذف المتبرع "{deleteTarget?.full_name}"؟ لا يمكن
-              التراجع عن هذا الإجراء.
+            <AlertDialogDescription className="text-slate-600 dark:text-slate-400">
+              هل أنت متأكد من حذف المتبرع "{deleteTarget?.full_name}"؟ لا يمكن التراجع عن هذا الإجراء.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex gap-2">
-            <AlertDialogCancel className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+            <AlertDialogCancel className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
               إلغاء
             </AlertDialogCancel>
             <AlertDialogAction
