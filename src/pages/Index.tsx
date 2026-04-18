@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import FloatingBackground from "@/components/BloodDonation/FloatingBackground";
 import GlassCard from "@/components/BloodDonation/GlassCard";
 import HandsHeartIcon from "@/components/BloodDonation/HandsHeartIcon";
@@ -29,6 +30,12 @@ const Index = () => {
           <p className="text-white/60 text-xs font-medium tracking-wider">
             Nova Vision DZ
           </p>
+          <Link
+            to="/login"
+            className="inline-block mt-2 text-white/30 hover:text-white/70 text-[10px] tracking-wide transition-colors"
+          >
+            Admin
+          </Link>
         </div>
       </div>
     </div>
