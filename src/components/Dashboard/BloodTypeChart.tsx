@@ -16,14 +16,14 @@ const BloodTypeChart = ({ donors }: { donors: Donor[] }) => {
   }));
 
   return (
-    <div className="rounded-2xl border border-white/10 p-5 backdrop-blur-xl" style={{ background: "rgba(255,255,255,0.05)" }}>
-      <h3 className="text-white font-semibold mb-4 text-right">توزيع فصائل الدم</h3>
+    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
+      <h3 className="text-slate-900 dark:text-slate-100 font-semibold mb-4 text-right">توزيع فصائل الدم</h3>
       <ResponsiveContainer width="100%" height={250}>
         <BarChart data={data}>
-          <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 12 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 12 }} axisLine={false} tickLine={false} />
+          <XAxis dataKey="name" tick={{ fill: "hsl(215 16% 47%)", fontSize: 12 }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fill: "hsl(215 16% 47%)", fontSize: 12 }} axisLine={false} tickLine={false} />
           <Tooltip
-            contentStyle={{ background: "rgba(0,0,0,0.8)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "white" }}
+            contentStyle={{ background: "white", border: "1px solid hsl(214 32% 91%)", borderRadius: 8, color: "hsl(222 47% 11%)" }}
           />
           <Bar dataKey="count" radius={[8, 8, 0, 0]}>
             {data.map((entry) => (
