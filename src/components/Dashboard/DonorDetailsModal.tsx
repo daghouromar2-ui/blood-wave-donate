@@ -72,13 +72,14 @@ const DonorDetailsModal = ({ donor, open, onClose }: DonorDetailsModalProps) => 
 
   const handleRecordDonationToday = async () => {
     try {
-      const todayStr = format(today, "yyyy-MM-dd");
+      if (!recordingDate) { toast.error("الرجاء اختيار التاريخ"); return; }
+      if (new Date(recordingDate) > today) { toast.error("لا يمكن اختيار تاريخ في المستقبل"); return; }
       await updateMutation.mutateAsync({
         id: donor.id,
-        last_donation_date: todayStr,
+        last_donation_date: recordingDate,
         total_donations: (donor.total_donations || 0) + 1,
       });
-      toast.success("تم تسجيل التبرع لليوم");
+      toast.success("تم تسجيل التبرع بنجاح");
       onClose();
     } catch {
       toast.error("حدث خطأ أثناء التسجيل");
