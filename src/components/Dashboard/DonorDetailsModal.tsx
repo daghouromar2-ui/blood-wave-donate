@@ -155,10 +155,27 @@ const DonorDetailsModal = ({ donor, open, onClose }: DonorDetailsModalProps) => 
               </div>
             </div>
 
-            <button
-              onClick={handleRecordDonationToday}
-              disabled={updateMutation.isPending}
-              className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+            {!showDatePicker ? (
+              <button
+                onClick={() => setShowDatePicker(true)}
+                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium flex items-center justify-center gap-2"
+              >
+                <CalendarCheck className="w-4 h-4" /> تسجيل تبرع جديد
+              </button>
+            ) : (
+              <div className="space-y-2 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-900/40">
+                <Label className="text-xs text-emerald-800 dark:text-emerald-300">تاريخ التبرع</Label>
+                <Input
+                  type="date"
+                  max={format(today, "yyyy-MM-dd")}
+                  value={recordingDate}
+                  onChange={(e) => setRecordingDate(e.target.value)}
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleRecordDonationToday}
+                    disabled={updateMutation.isPending}
+                    className="flex-1 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <CalendarCheck className="w-4 h-4" /> تسجيل تبرع اليوم
             </button>
