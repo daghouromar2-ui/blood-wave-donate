@@ -20,12 +20,16 @@ interface DonorDetailsModalProps {
 const DonorDetailsModal = ({ donor, open, onClose }: DonorDetailsModalProps) => {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Partial<Donor>>({});
+  const [recordingDate, setRecordingDate] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const updateMutation = useUpdateDonor();
 
   useEffect(() => {
     if (donor) {
       setForm(donor);
       setEditing(false);
+      setShowDatePicker(false);
+      setRecordingDate(format(new Date(), "yyyy-MM-dd"));
     }
   }, [donor, open]);
 
