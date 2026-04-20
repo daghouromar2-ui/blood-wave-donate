@@ -160,7 +160,7 @@ const DonationForm = () => {
               type="button"
               className={`${inputClassName} flex items-center justify-between cursor-pointer`}
             >
-              <span className={formData.lastDonation ? "text-white" : "text-white/50"}>
+              <span className={formData.lastDonation ? "text-black" : "text-black/50"}>
                 {formData.lastDonation
                   ? format(formData.lastDonation, "dd/MM/yyyy", { locale: ar })
                   : "اختر التاريخ"}
