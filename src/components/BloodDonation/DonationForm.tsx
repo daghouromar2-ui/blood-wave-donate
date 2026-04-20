@@ -81,7 +81,7 @@ const DonationForm = () => {
   };
 
   const inputClassName = 
-    "w-full px-5 py-3 pr-12 rounded-full border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm text-white bg-primary-foreground";
+    "w-full px-5 py-3 pr-12 rounded-full border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm bg-primary-foreground text-black";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
@@ -160,7 +160,7 @@ const DonationForm = () => {
               type="button"
               className={`${inputClassName} flex items-center justify-between cursor-pointer`}
             >
-              <span className={formData.lastDonation ? "text-white" : "text-white/50"}>
+              <span className={formData.lastDonation ? "text-black" : "text-black/50"}>
                 {formData.lastDonation
                   ? format(formData.lastDonation, "dd/MM/yyyy", { locale: ar })
                   : "اختر التاريخ"}
