@@ -93,7 +93,7 @@ const DonationForm = () => {
           placeholder="الإسم الكامل *"
           value={formData.fullName}
           onChange={(e) => handleChange("fullName", e.target.value)}
-          className={inputClassName.replace("bg-primary-foreground", "bg-secondary-foreground")}
+          className={inputClassName.replace("bg-primary-foreground", "bg-secondary-foreground").replace("text-primary", "text-secondary")}
         />
       </div>
 
