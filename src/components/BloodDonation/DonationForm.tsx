@@ -5,12 +5,21 @@ import { ar } from "date-fns/locale";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import BloodTypeSelector from "./BloodTypeSelector";
+import SuccessScreen from "./SuccessScreen";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ALGERIAN_WILAYAS } from "@/lib/wilayas";
 
 interface FormData {
   fullName: string;
@@ -33,6 +42,20 @@ const DonationForm = () => {
     lastDonation: undefined,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedName, setSubmittedName] = useState<string | null>(null);
+
+  const resetForm = () => {
+    setFormData({
+      fullName: "",
+      phone1: "",
+      phone2: "",
+      wilaya: "",
+      municipality: "",
+      bloodType: "",
+      lastDonation: undefined,
+    });
+    setSubmittedName(null);
+  };
 
   const handleChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -62,23 +85,15 @@ const DonationForm = () => {
       toast.error("حدث خطأ أثناء التسجيل. الرجاء المحاولة مرة أخرى");
       console.error(error);
     } else {
-      toast.success("تم التسجيل بنجاح! جزاك الله خيراً", {
-        description: "سيتم التواصل معك عند الحاجة",
-      });
-      
-      setFormData({
-        fullName: "",
-        phone1: "",
-        phone2: "",
-        wilaya: "",
-        municipality: "",
-        bloodType: "",
-        lastDonation: undefined,
-      });
+      setSubmittedName(formData.fullName);
     }
-    
+
     setIsSubmitting(false);
   };
+
+  if (submittedName) {
+    return <SuccessScreen donorName={submittedName} onRegisterAnother={resetForm} />;
+  }
 
   const inputClassName = 
     "w-full px-5 py-3 pr-12 rounded-full border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm bg-primary-foreground text-primary";
@@ -124,14 +139,22 @@ const DonationForm = () => {
       {/* Location Row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="relative">
-          <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600" />
-          <input
-            type="text"
-            placeholder="الولاية"
-            value={formData.wilaya}
-            onChange={(e) => handleChange("wilaya", e.target.value)}
-            className={inputClassName}
-          />
+          <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600 z-10 pointer-events-none" />
+          <Select value={formData.wilaya} onValueChange={(v) => handleChange("wilaya", v)}>
+            <SelectTrigger
+              dir="rtl"
+              className={`${inputClassName} h-auto justify-between [&>span]:text-right ${formData.wilaya ? "" : "[&>span]:text-black/50"}`}
+            >
+              <SelectValue placeholder="الولاية" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {ALGERIAN_WILAYAS.map((w) => (
+                <SelectItem key={w} value={w} className="text-right">
+                  {w}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="relative">
           <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600" />
