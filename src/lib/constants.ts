@@ -22,7 +22,7 @@ export const WILAYAS = [
   "إن قزام", "توقرت", "جانت", "المغير", "المنيعة"
 ];
 
-export const ELIGIBILITY_DAYS = 56; // 8 weeks
+export const ELIGIBILITY_DAYS = 90; // 3 months
 
 export type Donor = {
   id: string;
