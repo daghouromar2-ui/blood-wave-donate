@@ -1,4 +1,6 @@
-import { Heart, Share2, CheckCircle2 } from "lucide-react";
+import { useState } from "react";
+import { Heart, Share2, CheckCircle2, Copy, Check } from "lucide-react";
+import { toast } from "sonner";
 
 interface SuccessScreenProps {
   donorName: string;
@@ -6,19 +8,37 @@ interface SuccessScreenProps {
 }
 
 const SuccessScreen = ({ donorName, onRegisterAnother }: SuccessScreenProps) => {
-  const shareText = `لقد سجّلتُ كمتبرع بالدم في القرارة 🩸❤️\nانضم إلينا وكن سبباً في إنقاذ حياة:`;
+  const [copied, setCopied] = useState(false);
   const shareUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const shareText = `لقد سجّلتُ كمتبرع بالدم في القرارة 🩸❤️\nانضم إلينا وكن سبباً في إنقاذ حياة:\n${shareUrl}`;
 
   const handleShare = async () => {
-    if (navigator.share) {
+    // Try native share first (mobile)
+    if (typeof navigator !== "undefined" && navigator.share) {
       try {
-        await navigator.share({ title: "التبرع بالدم - القرارة", text: shareText, url: shareUrl });
-      } catch {
-        // user cancelled
+        await navigator.share({
+          title: "التبرع بالدم - القرارة",
+          text: shareText,
+        });
+        return;
+      } catch (err) {
+        // User cancelled or share failed — fall through to WhatsApp
+        if ((err as Error).name === "AbortError") return;
       }
-    } else {
-      const wa = `https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}`;
-      window.open(wa, "_blank");
+    }
+    // Fallback: open WhatsApp share
+    const waUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopied(true);
+      toast.success("تم نسخ الرابط");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("تعذّر نسخ الرابط");
     }
   };
 
@@ -68,23 +88,33 @@ const SuccessScreen = ({ donorName, onRegisterAnother }: SuccessScreenProps) => 
           <Heart className="w-5 h-5 text-white animate-pulse" fill="white" />
         </div>
         <p className="text-white/90 text-xs leading-relaxed">
-          { "{ وَمَنْ أَحْيَاهَا فَكَأَنَّمَا أَحْيَا النَّاسَ جَمِيعًا }" }
+          {"{ وَمَنْ أَحْيَاهَا فَكَأَنَّمَا أَحْيَا النَّاسَ جَمِيعًا }"}
         </p>
       </div>
 
-      {/* Share button */}
-      <button
-        type="button"
-        onClick={handleShare}
-        className="w-full py-3.5 mb-3 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02]"
-        style={{
-          background: "linear-gradient(135deg, #16a34a 0%, #22c55e 100%)",
-          boxShadow: "0 8px 24px rgba(22,163,74,0.4)",
-        }}
-      >
-        <Share2 className="w-5 h-5" />
-        شارك وادعُ أصدقاءك للتبرع
-      </button>
+      {/* Share buttons */}
+      <div className="flex gap-2 mb-3">
+        <button
+          type="button"
+          onClick={handleShare}
+          className="flex-1 py-3.5 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02]"
+          style={{
+            background: "linear-gradient(135deg, #16a34a 0%, #22c55e 100%)",
+            boxShadow: "0 8px 24px rgba(22,163,74,0.4)",
+          }}
+        >
+          <Share2 className="w-5 h-5" />
+          شارك عبر واتساب
+        </button>
+        <button
+          type="button"
+          onClick={handleCopy}
+          aria-label="نسخ الرابط"
+          className="w-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-[1.05] bg-white/20 border border-white/40 text-white"
+        >
+          {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+        </button>
+      </div>
 
       <button
         type="button"
