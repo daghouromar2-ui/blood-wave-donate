@@ -31,12 +31,7 @@ interface FormData {
   lastDonation: Date | undefined;
 }
 
-interface DonationFormProps {
-  submittedName: string | null;
-  onSubmittedNameChange: (name: string | null) => void;
-}
-
-const DonationForm = ({ submittedName, onSubmittedNameChange }: DonationFormProps) => {
+const DonationForm = () => {
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     phone1: "",
@@ -47,6 +42,7 @@ const DonationForm = ({ submittedName, onSubmittedNameChange }: DonationFormProp
     lastDonation: undefined,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedName, setSubmittedName] = useState<string | null>(null);
 
   const resetForm = () => {
     setFormData({
@@ -58,7 +54,7 @@ const DonationForm = ({ submittedName, onSubmittedNameChange }: DonationFormProp
       bloodType: "",
       lastDonation: undefined,
     });
-    onSubmittedNameChange(null);
+    setSubmittedName(null);
   };
 
   const handleChange = (field: keyof FormData, value: string) => {
@@ -89,7 +85,7 @@ const DonationForm = ({ submittedName, onSubmittedNameChange }: DonationFormProp
       toast.error("حدث خطأ أثناء التسجيل. الرجاء المحاولة مرة أخرى");
       console.error(error);
     } else {
-      onSubmittedNameChange(formData.fullName);
+      setSubmittedName(formData.fullName);
     }
 
     setIsSubmitting(false);
