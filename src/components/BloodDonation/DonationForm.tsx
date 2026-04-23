@@ -139,14 +139,22 @@ const DonationForm = () => {
       {/* Location Row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="relative">
-          <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600" />
-          <input
-            type="text"
-            placeholder="الولاية"
-            value={formData.wilaya}
-            onChange={(e) => handleChange("wilaya", e.target.value)}
-            className={inputClassName}
-          />
+          <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600 z-10 pointer-events-none" />
+          <Select value={formData.wilaya} onValueChange={(v) => handleChange("wilaya", v)}>
+            <SelectTrigger
+              dir="rtl"
+              className={`${inputClassName} h-auto justify-between [&>span]:text-right ${formData.wilaya ? "" : "[&>span]:text-black/50"}`}
+            >
+              <SelectValue placeholder="الولاية" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {ALGERIAN_WILAYAS.map((w) => (
+                <SelectItem key={w} value={w} className="text-right">
+                  {w}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="relative">
           <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600" />
