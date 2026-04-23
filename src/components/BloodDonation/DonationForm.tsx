@@ -5,12 +5,21 @@ import { ar } from "date-fns/locale";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import BloodTypeSelector from "./BloodTypeSelector";
+import SuccessScreen from "./SuccessScreen";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ALGERIAN_WILAYAS } from "@/lib/wilayas";
 
 interface FormData {
   fullName: string;
@@ -33,6 +42,20 @@ const DonationForm = () => {
     lastDonation: undefined,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedName, setSubmittedName] = useState<string | null>(null);
+
+  const resetForm = () => {
+    setFormData({
+      fullName: "",
+      phone1: "",
+      phone2: "",
+      wilaya: "",
+      municipality: "",
+      bloodType: "",
+      lastDonation: undefined,
+    });
+    setSubmittedName(null);
+  };
 
   const handleChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -62,23 +85,15 @@ const DonationForm = () => {
       toast.error("حدث خطأ أثناء التسجيل. الرجاء المحاولة مرة أخرى");
       console.error(error);
     } else {
-      toast.success("تم التسجيل بنجاح! جزاك الله خيراً", {
-        description: "سيتم التواصل معك عند الحاجة",
-      });
-      
-      setFormData({
-        fullName: "",
-        phone1: "",
-        phone2: "",
-        wilaya: "",
-        municipality: "",
-        bloodType: "",
-        lastDonation: undefined,
-      });
+      setSubmittedName(formData.fullName);
     }
-    
+
     setIsSubmitting(false);
   };
+
+  if (submittedName) {
+    return <SuccessScreen donorName={submittedName} onRegisterAnother={resetForm} />;
+  }
 
   const inputClassName = 
     "w-full px-5 py-3 pr-12 rounded-full border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm bg-primary-foreground text-primary";
