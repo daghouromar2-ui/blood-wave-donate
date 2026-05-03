@@ -62,6 +62,7 @@ const DonorDetailsModal = ({ donor, open, onClose }: DonorDetailsModalProps) => 
         gender: form.gender,
         is_active: form.is_active,
         total_donations: form.total_donations,
+        has_chronic_disease: form.has_chronic_disease,
       });
       toast.success("تم تحديث البيانات بنجاح");
       setEditing(false);
@@ -152,6 +153,16 @@ const DonorDetailsModal = ({ donor, open, onClose }: DonorDetailsModalProps) => 
               <div className="flex items-center gap-3">
                 <Droplets className="w-4 h-4 text-slate-400" />
                 <span>عدد التبرعات: {donor.total_donations}</span>
+              </div>
+              {donor.date_of_birth && (
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-4 h-4 text-slate-400" />
+                  <span>تاريخ الميلاد: {format(new Date(donor.date_of_birth), "dd/MM/yyyy", { locale: ar })}</span>
+                </div>
+              )}
+              <div className="flex items-start gap-3">
+                <User className="w-4 h-4 text-slate-400 mt-0.5" />
+                <span>الأمراض المزمنة/المعدية: {donor.has_chronic_disease || "غير محدد"}</span>
               </div>
             </div>
 
@@ -301,6 +312,15 @@ const DonorDetailsModal = ({ donor, open, onClose }: DonorDetailsModalProps) => 
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div>
+              <Label className="text-xs">الأمراض المزمنة أو المعدية</Label>
+              <Input
+                placeholder="لا / نعم: اسم المرض"
+                value={form.has_chronic_disease ?? ""}
+                onChange={(e) => setField("has_chronic_disease", e.target.value || null)}
+              />
             </div>
 
             <div className="flex gap-2 pt-2">
