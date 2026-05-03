@@ -213,6 +213,48 @@ const DonationForm = () => {
         </Popover>
       </div>
 
+      {/* Chronic / Contagious Disease */}
+      <div className="space-y-2" dir="rtl">
+        <label className="text-sm font-medium text-primary-foreground flex items-center gap-2">
+          <HeartPulse className="w-4 h-4" />
+          هل تعاني من أي مرض مزمن أو معدي؟
+        </label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => handleChange("hasChronicDisease", "no")}
+            className={`flex-1 py-2.5 rounded-full border transition-all duration-300 backdrop-blur-sm ${
+              formData.hasChronicDisease === "no"
+                ? "bg-red-700 text-white border-red-700"
+                : "bg-primary-foreground text-primary border-red-300/50"
+            }`}
+          >
+            لا
+          </button>
+          <button
+            type="button"
+            onClick={() => handleChange("hasChronicDisease", "yes")}
+            className={`flex-1 py-2.5 rounded-full border transition-all duration-300 backdrop-blur-sm ${
+              formData.hasChronicDisease === "yes"
+                ? "bg-red-700 text-white border-red-700"
+                : "bg-primary-foreground text-primary border-red-300/50"
+            }`}
+          >
+            نعم
+          </button>
+        </div>
+        {formData.hasChronicDisease === "yes" && (
+          <input
+            type="text"
+            placeholder="يرجى التوضيح (اسم المرض)"
+            maxLength={200}
+            value={formData.chronicDiseaseDetails}
+            onChange={(e) => handleChange("chronicDiseaseDetails", e.target.value)}
+            className="w-full px-5 py-3 rounded-full border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm bg-primary-foreground text-primary"
+          />
+        )}
+      </div>
+
       {/* Submit Button */}
       <button
         type="submit"
