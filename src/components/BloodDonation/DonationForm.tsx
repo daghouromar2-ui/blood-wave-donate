@@ -31,7 +31,18 @@ interface FormData {
   lastDonation: Date | undefined;
   hasChronicDisease: string;
   chronicDiseaseDetails: string;
+  birthDay: string;
+  birthMonth: string;
+  birthYear: string;
 }
+
+const ARABIC_MONTHS = [
+  "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان",
+  "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
+];
+const CURRENT_YEAR = new Date().getFullYear();
+const BIRTH_YEARS = Array.from({ length: 80 }, (_, i) => String(CURRENT_YEAR - 18 - i));
+const BIRTH_DAYS = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0"));
 
 const DonationForm = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -44,6 +55,9 @@ const DonationForm = () => {
     lastDonation: undefined,
     hasChronicDisease: "",
     chronicDiseaseDetails: "",
+    birthDay: "",
+    birthMonth: "",
+    birthYear: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedName, setSubmittedName] = useState<string | null>(null);
@@ -59,6 +73,9 @@ const DonationForm = () => {
       lastDonation: undefined,
       hasChronicDisease: "",
       chronicDiseaseDetails: "",
+      birthDay: "",
+      birthMonth: "",
+      birthYear: "",
     });
     setSubmittedName(null);
   };
@@ -88,6 +105,9 @@ const DonationForm = () => {
       has_chronic_disease: formData.hasChronicDisease === "yes"
         ? (formData.chronicDiseaseDetails.trim() ? `نعم: ${formData.chronicDiseaseDetails.trim()}` : "نعم")
         : formData.hasChronicDisease === "no" ? "لا" : null,
+      date_of_birth: formData.birthYear && formData.birthMonth && formData.birthDay
+        ? `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`
+        : null,
     });
 
     if (error) {
