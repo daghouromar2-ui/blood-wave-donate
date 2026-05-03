@@ -314,6 +314,15 @@ const DonorDetailsModal = ({ donor, open, onClose }: DonorDetailsModalProps) => 
               </div>
             </div>
 
+            <div>
+              <Label className="text-xs">الأمراض المزمنة أو المعدية</Label>
+              <Input
+                placeholder="لا / نعم: اسم المرض"
+                value={form.has_chronic_disease ?? ""}
+                onChange={(e) => setField("has_chronic_disease", e.target.value || null)}
+              />
+            </div>
+
             <div className="flex gap-2 pt-2">
               <button
                 onClick={handleSave}
