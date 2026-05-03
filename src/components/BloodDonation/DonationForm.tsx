@@ -31,7 +31,18 @@ interface FormData {
   lastDonation: Date | undefined;
   hasChronicDisease: string;
   chronicDiseaseDetails: string;
+  birthDay: string;
+  birthMonth: string;
+  birthYear: string;
 }
+
+const ARABIC_MONTHS = [
+  "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان",
+  "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
+];
+const CURRENT_YEAR = new Date().getFullYear();
+const BIRTH_YEARS = Array.from({ length: 80 }, (_, i) => String(CURRENT_YEAR - 18 - i));
+const BIRTH_DAYS = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0"));
 
 const DonationForm = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -44,6 +55,9 @@ const DonationForm = () => {
     lastDonation: undefined,
     hasChronicDisease: "",
     chronicDiseaseDetails: "",
+    birthDay: "",
+    birthMonth: "",
+    birthYear: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedName, setSubmittedName] = useState<string | null>(null);
@@ -59,6 +73,9 @@ const DonationForm = () => {
       lastDonation: undefined,
       hasChronicDisease: "",
       chronicDiseaseDetails: "",
+      birthDay: "",
+      birthMonth: "",
+      birthYear: "",
     });
     setSubmittedName(null);
   };
@@ -88,6 +105,9 @@ const DonationForm = () => {
       has_chronic_disease: formData.hasChronicDisease === "yes"
         ? (formData.chronicDiseaseDetails.trim() ? `نعم: ${formData.chronicDiseaseDetails.trim()}` : "نعم")
         : formData.hasChronicDisease === "no" ? "لا" : null,
+      date_of_birth: formData.birthYear && formData.birthMonth && formData.birthDay
+        ? `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`
+        : null,
     });
 
     if (error) {
@@ -143,6 +163,42 @@ const DonationForm = () => {
           onChange={(e) => handleChange("phone2", e.target.value)}
           className={inputClassName}
         />
+      </div>
+
+      {/* Date of Birth */}
+      <div className="space-y-2" dir="rtl">
+        <label className="text-sm font-medium text-primary-foreground flex items-center gap-2">
+          <CalendarIcon className="w-4 h-4" />
+          تاريخ الميلاد
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          <Select value={formData.birthDay} onValueChange={(v) => handleChange("birthDay", v)}>
+            <SelectTrigger dir="rtl" className={`${inputClassName} h-auto justify-between ${formData.birthDay ? "" : "[&>span]:text-black/50"}`}>
+              <SelectValue placeholder="اليوم" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {BIRTH_DAYS.map((d) => <SelectItem key={d} value={d} className="text-right">{d}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={formData.birthMonth} onValueChange={(v) => handleChange("birthMonth", v)}>
+            <SelectTrigger dir="rtl" className={`${inputClassName} h-auto justify-between ${formData.birthMonth ? "" : "[&>span]:text-black/50"}`}>
+              <SelectValue placeholder="الشهر" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {ARABIC_MONTHS.map((m, i) => (
+                <SelectItem key={m} value={String(i + 1).padStart(2, "0")} className="text-right">{m}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={formData.birthYear} onValueChange={(v) => handleChange("birthYear", v)}>
+            <SelectTrigger dir="rtl" className={`${inputClassName} h-auto justify-between ${formData.birthYear ? "" : "[&>span]:text-black/50"}`}>
+              <SelectValue placeholder="السنة" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {BIRTH_YEARS.map((y) => <SelectItem key={y} value={y} className="text-right">{y}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Location Row */}
