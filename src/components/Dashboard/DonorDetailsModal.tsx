@@ -154,6 +154,16 @@ const DonorDetailsModal = ({ donor, open, onClose }: DonorDetailsModalProps) => 
                 <Droplets className="w-4 h-4 text-slate-400" />
                 <span>عدد التبرعات: {donor.total_donations}</span>
               </div>
+              {donor.date_of_birth && (
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-4 h-4 text-slate-400" />
+                  <span>تاريخ الميلاد: {format(new Date(donor.date_of_birth), "dd/MM/yyyy", { locale: ar })}</span>
+                </div>
+              )}
+              <div className="flex items-start gap-3">
+                <User className="w-4 h-4 text-slate-400 mt-0.5" />
+                <span>الأمراض المزمنة/المعدية: {donor.has_chronic_disease || "غير محدد"}</span>
+              </div>
             </div>
 
             {!showDatePicker ? (
