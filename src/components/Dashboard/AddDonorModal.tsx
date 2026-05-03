@@ -34,6 +34,9 @@ const AddDonorModal = () => {
     municipality: "",
     blood_type: "",
     last_donation_date: undefined as Date | undefined,
+    date_of_birth: undefined as Date | undefined,
+    has_chronic_disease_flag: "no" as "yes" | "no",
+    chronic_disease_details: "",
   });
 
   const reset = () =>
@@ -45,6 +48,9 @@ const AddDonorModal = () => {
       municipality: "",
       blood_type: "",
       last_donation_date: undefined,
+      date_of_birth: undefined,
+      has_chronic_disease_flag: "no",
+      chronic_disease_details: "",
     });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,6 +70,13 @@ const AddDonorModal = () => {
       last_donation_date: form.last_donation_date
         ? format(form.last_donation_date, "yyyy-MM-dd")
         : null,
+      date_of_birth: form.date_of_birth
+        ? format(form.date_of_birth, "yyyy-MM-dd")
+        : null,
+      has_chronic_disease:
+        form.has_chronic_disease_flag === "yes"
+          ? `نعم: ${form.chronic_disease_details || "غير محدد"}`
+          : "لا",
     });
     setSubmitting(false);
     if (error) {
