@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Phone, MapPin, CalendarIcon } from "lucide-react";
+import { User, Phone, MapPin, CalendarIcon, HeartPulse } from "lucide-react";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { toast } from "sonner";
@@ -29,6 +29,8 @@ interface FormData {
   municipality: string;
   bloodType: string;
   lastDonation: Date | undefined;
+  hasChronicDisease: string;
+  chronicDiseaseDetails: string;
 }
 
 const DonationForm = () => {
@@ -40,6 +42,8 @@ const DonationForm = () => {
     municipality: "",
     bloodType: "",
     lastDonation: undefined,
+    hasChronicDisease: "",
+    chronicDiseaseDetails: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedName, setSubmittedName] = useState<string | null>(null);
@@ -53,6 +57,8 @@ const DonationForm = () => {
       municipality: "",
       bloodType: "",
       lastDonation: undefined,
+      hasChronicDisease: "",
+      chronicDiseaseDetails: "",
     });
     setSubmittedName(null);
   };
@@ -79,6 +85,9 @@ const DonationForm = () => {
       municipality: formData.municipality || null,
       blood_type: formData.bloodType,
       last_donation_date: formData.lastDonation ? format(formData.lastDonation, "yyyy-MM-dd") : null,
+      has_chronic_disease: formData.hasChronicDisease === "yes"
+        ? (formData.chronicDiseaseDetails.trim() ? `نعم: ${formData.chronicDiseaseDetails.trim()}` : "نعم")
+        : formData.hasChronicDisease === "no" ? "لا" : null,
     });
 
     if (error) {
