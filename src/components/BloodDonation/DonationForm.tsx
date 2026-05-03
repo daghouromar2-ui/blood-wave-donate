@@ -165,6 +165,42 @@ const DonationForm = () => {
         />
       </div>
 
+      {/* Date of Birth */}
+      <div className="space-y-2" dir="rtl">
+        <label className="text-sm font-medium text-primary-foreground flex items-center gap-2">
+          <CalendarIcon className="w-4 h-4" />
+          تاريخ الميلاد
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          <Select value={formData.birthDay} onValueChange={(v) => handleChange("birthDay", v)}>
+            <SelectTrigger dir="rtl" className={`${inputClassName} h-auto justify-between ${formData.birthDay ? "" : "[&>span]:text-black/50"}`}>
+              <SelectValue placeholder="اليوم" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {BIRTH_DAYS.map((d) => <SelectItem key={d} value={d} className="text-right">{d}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={formData.birthMonth} onValueChange={(v) => handleChange("birthMonth", v)}>
+            <SelectTrigger dir="rtl" className={`${inputClassName} h-auto justify-between ${formData.birthMonth ? "" : "[&>span]:text-black/50"}`}>
+              <SelectValue placeholder="الشهر" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {ARABIC_MONTHS.map((m, i) => (
+                <SelectItem key={m} value={String(i + 1).padStart(2, "0")} className="text-right">{m}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={formData.birthYear} onValueChange={(v) => handleChange("birthYear", v)}>
+            <SelectTrigger dir="rtl" className={`${inputClassName} h-auto justify-between ${formData.birthYear ? "" : "[&>span]:text-black/50"}`}>
+              <SelectValue placeholder="السنة" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {BIRTH_YEARS.map((y) => <SelectItem key={y} value={y} className="text-right">{y}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {/* Location Row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="relative">
