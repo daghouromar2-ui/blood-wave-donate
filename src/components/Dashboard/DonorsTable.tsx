@@ -9,7 +9,7 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { differenceInDays, format } from "date-fns";
+import { differenceInDays, differenceInYears, format } from "date-fns";
 import { ar } from "date-fns/locale";
 import {
   Phone,
@@ -132,6 +132,44 @@ const DonorsTable = ({ donors, allDonors }: DonorsTableProps) => {
         ),
       },
       {
+        id: "date_of_birth",
+        header: "تاريخ الميلاد",
+        accessorFn: (row) => row.date_of_birth,
+        cell: ({ getValue }) => {
+          const val = getValue<string | null>();
+          if (!val) return <span className="text-slate-400 text-sm">—</span>;
+          const age = differenceInYears(today, new Date(val));
+          return (
+            <span className="text-slate-600 dark:text-slate-300 text-sm">
+              {format(new Date(val), "dd/MM/yyyy", { locale: ar })}
+              <span className="text-slate-400 text-xs mr-1">({age} سنة)</span>
+            </span>
+          );
+        },
+      },
+      {
+        accessorKey: "has_chronic_disease",
+        header: "أمراض مزمنة/معدية",
+        cell: ({ getValue }) => {
+          const val = getValue<string | null>();
+          if (!val || val === "لا") {
+            return (
+              <span className="px-2 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                لا
+              </span>
+            );
+          }
+          return (
+            <span
+              className="px-2 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 max-w-[200px] truncate inline-block"
+              title={val}
+            >
+              {val}
+            </span>
+          );
+        },
+      },
+      {
         accessorKey: "last_donation_date",
         header: "آخر تبرع",
         cell: ({ getValue }) => {
@@ -240,13 +278,15 @@ const DonorsTable = ({ donors, allDonors }: DonorsTableProps) => {
 
   const buildAndDownloadCSV = (rows: Donor[], suffix = "") => {
     const BOM = "\uFEFF";
-    const headers = ["الاسم", "الفصيلة", "الهاتف", "الولاية", "البلدية", "آخر تبرع", "الحالة"];
+    const headers = ["الاسم", "الفصيلة", "الهاتف", "الولاية", "البلدية", "تاريخ الميلاد", "أمراض مزمنة/معدية", "آخر تبرع", "الحالة"];
     const dataRows = rows.map((d) => [
       d.full_name,
       d.blood_type,
       d.phone_whatsapp,
       d.wilaya || "",
       d.municipality || "",
+      d.date_of_birth || "",
+      d.has_chronic_disease || "",
       d.last_donation_date || "",
       getEligibility(d).label,
     ]);
