@@ -334,6 +334,34 @@ const DonorDetailsModal = ({ donor, open, onClose }: DonorDetailsModalProps) => 
               />
             </div>
 
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-3 space-y-3 bg-slate-50/60 dark:bg-slate-800/40">
+              <Label className="text-xs font-semibold text-slate-700 dark:text-slate-300">الأهلية للتبرع (تحكم يدوي)</Label>
+              <Select
+                value={form.eligibility_override ?? "auto"}
+                onValueChange={(v) => setField("eligibility_override", v === "auto" ? null : v)}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="auto">تلقائي (حسب آخر تبرع والأمراض)</SelectItem>
+                  <SelectItem value="eligible">مؤهل يدوياً</SelectItem>
+                  <SelectItem value="not_eligible">غير مؤهل يدوياً</SelectItem>
+                </SelectContent>
+              </Select>
+              {form.eligibility_override === "not_eligible" && (
+                <div>
+                  <Label className="text-xs">سبب عدم الأهلية</Label>
+                  <Input
+                    placeholder="مثال: مرض، ضغط الدم، حمل..."
+                    value={form.ineligibility_reason ?? ""}
+                    onChange={(e) => setField("ineligibility_reason", e.target.value || null)}
+                  />
+                </div>
+              )}
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                يتم اعتبار المتبرع غير مؤهل تلقائياً إذا كان لديه مرض مزمن/معدي. يمكنك تجاوز ذلك يدوياً.
+              </p>
+            </div>
+
             <div className="flex gap-2 pt-2">
               <button
                 onClick={handleSave}
