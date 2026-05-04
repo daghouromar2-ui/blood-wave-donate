@@ -119,8 +119,16 @@ const DonorDetailsModal = ({ donor, open, onClose }: DonorDetailsModalProps) => 
               </span>
             </div>
 
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-xl ${isEligible ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400" : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400"}`}>
-              <span>{isEligible ? "✅ مؤهل للتبرع" : `❌ غير مؤهل - ${daysUntil} يوم متبقي`}</span>
+            <div className={`flex flex-col gap-1 px-3 py-2 rounded-xl ${isEligible ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400" : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400"}`}>
+              <span className="font-medium">
+                {isEligible ? `✅ ${eligibility.label}` : `❌ ${eligibility.label}${eligibility.source === "recent" ? "" : ""}`}
+              </span>
+              {eligibility.reason && (
+                <span className="text-xs opacity-80">السبب: {eligibility.reason}</span>
+              )}
+              {!isEligible && eligibility.source === "recent" && (
+                <span className="text-xs opacity-80">{daysUntil} يوم متبقي</span>
+              )}
             </div>
 
             <div className="space-y-3 text-sm">
