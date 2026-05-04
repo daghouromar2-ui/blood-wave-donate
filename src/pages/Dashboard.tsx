@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useDonors } from "@/hooks/useDonors";
 import { LogOut, Droplets } from "lucide-react";
-import { differenceInDays, differenceInYears } from "date-fns";
+import { differenceInYears } from "date-fns";
 import DashboardBackground from "@/components/Dashboard/DashboardBackground";
 import StatsCards from "@/components/Dashboard/StatsCards";
 import DonorsFilters, { type FiltersState } from "@/components/Dashboard/DonorsFilters";
