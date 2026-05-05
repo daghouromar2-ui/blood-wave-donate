@@ -1,16 +1,25 @@
 import { useState } from "react";
-import { User, Phone, MapPin, CalendarIcon } from "lucide-react";
+import { User, Phone, MapPin, CalendarIcon, HeartPulse } from "lucide-react";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import BloodTypeSelector from "./BloodTypeSelector";
+import SuccessScreen from "./SuccessScreen";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ALGERIAN_WILAYAS } from "@/lib/wilayas";
 
 interface FormData {
   fullName: string;
@@ -20,7 +29,20 @@ interface FormData {
   municipality: string;
   bloodType: string;
   lastDonation: Date | undefined;
+  hasChronicDisease: string;
+  chronicDiseaseDetails: string;
+  birthDay: string;
+  birthMonth: string;
+  birthYear: string;
 }
+
+const ARABIC_MONTHS = [
+  "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان",
+  "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
+];
+const CURRENT_YEAR = new Date().getFullYear();
+const BIRTH_YEARS = Array.from({ length: 80 }, (_, i) => String(CURRENT_YEAR - 18 - i));
+const BIRTH_DAYS = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0"));
 
 const DonationForm = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -31,8 +53,32 @@ const DonationForm = () => {
     municipality: "",
     bloodType: "",
     lastDonation: undefined,
+    hasChronicDisease: "",
+    chronicDiseaseDetails: "",
+    birthDay: "",
+    birthMonth: "",
+    birthYear: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedName, setSubmittedName] = useState<string | null>(null);
+
+  const resetForm = () => {
+    setFormData({
+      fullName: "",
+      phone1: "",
+      phone2: "",
+      wilaya: "",
+      municipality: "",
+      bloodType: "",
+      lastDonation: undefined,
+      hasChronicDisease: "",
+      chronicDiseaseDetails: "",
+      birthDay: "",
+      birthMonth: "",
+      birthYear: "",
+    });
+    setSubmittedName(null);
+  };
 
   const handleChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -56,32 +102,30 @@ const DonationForm = () => {
       municipality: formData.municipality || null,
       blood_type: formData.bloodType,
       last_donation_date: formData.lastDonation ? format(formData.lastDonation, "yyyy-MM-dd") : null,
+      has_chronic_disease: formData.hasChronicDisease === "yes"
+        ? (formData.chronicDiseaseDetails.trim() ? `نعم: ${formData.chronicDiseaseDetails.trim()}` : "نعم")
+        : formData.hasChronicDisease === "no" ? "لا" : null,
+      date_of_birth: formData.birthYear && formData.birthMonth && formData.birthDay
+        ? `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`
+        : null,
     });
 
     if (error) {
       toast.error("حدث خطأ أثناء التسجيل. الرجاء المحاولة مرة أخرى");
       console.error(error);
     } else {
-      toast.success("تم التسجيل بنجاح! جزاك الله خيراً", {
-        description: "سيتم التواصل معك عند الحاجة",
-      });
-      
-      setFormData({
-        fullName: "",
-        phone1: "",
-        phone2: "",
-        wilaya: "",
-        municipality: "",
-        bloodType: "",
-        lastDonation: undefined,
-      });
+      setSubmittedName(formData.fullName);
     }
-    
+
     setIsSubmitting(false);
   };
 
+  if (submittedName) {
+    return <SuccessScreen donorName={submittedName} onRegisterAnother={resetForm} />;
+  }
+
   const inputClassName = 
-    "w-full px-5 py-3 pr-12 rounded-full border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm text-white bg-primary-foreground";
+    "w-full px-5 py-3 pr-12 rounded-full border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm bg-primary-foreground text-primary";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
@@ -93,7 +137,7 @@ const DonationForm = () => {
           placeholder="الإسم الكامل *"
           value={formData.fullName}
           onChange={(e) => handleChange("fullName", e.target.value)}
-          className={inputClassName.replace("bg-primary-foreground", "bg-secondary-foreground")}
+          className={inputClassName.replace("bg-primary-foreground", "bg-secondary-foreground").replace("text-primary", "text-secondary")}
         />
       </div>
 
@@ -121,17 +165,61 @@ const DonationForm = () => {
         />
       </div>
 
+      {/* Date of Birth */}
+      <div className="space-y-2" dir="rtl">
+        <label className="text-sm font-medium text-primary-foreground flex items-center gap-2">
+          <CalendarIcon className="w-4 h-4" />
+          تاريخ الميلاد
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          <Select value={formData.birthDay} onValueChange={(v) => handleChange("birthDay", v)}>
+            <SelectTrigger dir="rtl" className={`${inputClassName} h-auto justify-between ${formData.birthDay ? "" : "[&>span]:text-black/50"}`}>
+              <SelectValue placeholder="اليوم" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {BIRTH_DAYS.map((d) => <SelectItem key={d} value={d} className="text-right">{d}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={formData.birthMonth} onValueChange={(v) => handleChange("birthMonth", v)}>
+            <SelectTrigger dir="rtl" className={`${inputClassName} h-auto justify-between ${formData.birthMonth ? "" : "[&>span]:text-black/50"}`}>
+              <SelectValue placeholder="الشهر" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {ARABIC_MONTHS.map((m, i) => (
+                <SelectItem key={m} value={String(i + 1).padStart(2, "0")} className="text-right">{m}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={formData.birthYear} onValueChange={(v) => handleChange("birthYear", v)}>
+            <SelectTrigger dir="rtl" className={`${inputClassName} h-auto justify-between ${formData.birthYear ? "" : "[&>span]:text-black/50"}`}>
+              <SelectValue placeholder="السنة" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {BIRTH_YEARS.map((y) => <SelectItem key={y} value={y} className="text-right">{y}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {/* Location Row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="relative">
-          <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600" />
-          <input
-            type="text"
-            placeholder="الولاية"
-            value={formData.wilaya}
-            onChange={(e) => handleChange("wilaya", e.target.value)}
-            className={inputClassName}
-          />
+          <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600 z-10 pointer-events-none" />
+          <Select value={formData.wilaya} onValueChange={(v) => handleChange("wilaya", v)}>
+            <SelectTrigger
+              dir="rtl"
+              className={`${inputClassName} h-auto justify-between [&>span]:text-right ${formData.wilaya ? "" : "[&>span]:text-black/50"}`}
+            >
+              <SelectValue placeholder="الولاية" />
+            </SelectTrigger>
+            <SelectContent dir="rtl" className="max-h-72 bg-background">
+              {ALGERIAN_WILAYAS.map((w) => (
+                <SelectItem key={w} value={w} className="text-right">
+                  {w}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="relative">
           <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600" />
@@ -160,7 +248,7 @@ const DonationForm = () => {
               type="button"
               className={`${inputClassName} flex items-center justify-between cursor-pointer`}
             >
-              <span className={formData.lastDonation ? "text-white" : "text-white/50"}>
+              <span className={formData.lastDonation ? "text-black" : "text-black/50"}>
                 {formData.lastDonation
                   ? format(formData.lastDonation, "dd/MM/yyyy", { locale: ar })
                   : "اختر التاريخ"}
@@ -179,6 +267,48 @@ const DonationForm = () => {
             />
           </PopoverContent>
         </Popover>
+      </div>
+
+      {/* Chronic / Contagious Disease */}
+      <div className="space-y-2" dir="rtl">
+        <label className="text-sm font-medium text-primary-foreground flex items-center gap-2">
+          <HeartPulse className="w-4 h-4" />
+          هل تعاني من أي مرض مزمن أو معدي؟
+        </label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => handleChange("hasChronicDisease", "no")}
+            className={`flex-1 py-2.5 rounded-full border transition-all duration-300 backdrop-blur-sm ${
+              formData.hasChronicDisease === "no"
+                ? "bg-red-700 text-white border-red-700"
+                : "bg-primary-foreground text-primary border-red-300/50"
+            }`}
+          >
+            لا
+          </button>
+          <button
+            type="button"
+            onClick={() => handleChange("hasChronicDisease", "yes")}
+            className={`flex-1 py-2.5 rounded-full border transition-all duration-300 backdrop-blur-sm ${
+              formData.hasChronicDisease === "yes"
+                ? "bg-red-700 text-white border-red-700"
+                : "bg-primary-foreground text-primary border-red-300/50"
+            }`}
+          >
+            نعم
+          </button>
+        </div>
+        {formData.hasChronicDisease === "yes" && (
+          <input
+            type="text"
+            placeholder="يرجى التوضيح (اسم المرض)"
+            maxLength={200}
+            value={formData.chronicDiseaseDetails}
+            onChange={(e) => handleChange("chronicDiseaseDetails", e.target.value)}
+            className="w-full px-5 py-3 rounded-full border border-red-300/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-400 transition-all duration-300 backdrop-blur-sm bg-primary-foreground text-primary"
+          />
+        )}
       </div>
 
       {/* Submit Button */}

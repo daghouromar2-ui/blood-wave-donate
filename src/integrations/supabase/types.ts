@@ -92,9 +92,12 @@ export type Database = {
           blood_type: string
           created_at: string
           date_of_birth: string | null
+          eligibility_override: string | null
           full_name: string
           gender: string | null
+          has_chronic_disease: string | null
           id: string
+          ineligibility_reason: string | null
           is_active: boolean
           last_donation_date: string | null
           municipality: string | null
@@ -108,9 +111,12 @@ export type Database = {
           blood_type: string
           created_at?: string
           date_of_birth?: string | null
+          eligibility_override?: string | null
           full_name: string
           gender?: string | null
+          has_chronic_disease?: string | null
           id?: string
+          ineligibility_reason?: string | null
           is_active?: boolean
           last_donation_date?: string | null
           municipality?: string | null
@@ -124,9 +130,12 @@ export type Database = {
           blood_type?: string
           created_at?: string
           date_of_birth?: string | null
+          eligibility_override?: string | null
           full_name?: string
           gender?: string | null
+          has_chronic_disease?: string | null
           id?: string
+          ineligibility_reason?: string | null
           is_active?: boolean
           last_donation_date?: string | null
           municipality?: string | null
